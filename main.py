@@ -2,6 +2,9 @@ import cbpro
 from Bot import Bot
 import Tkinter as tk
 
+
+
+
 # SORT OUT VARIABLE NAMES
 
 data = open('keys.txt', 'r').read().splitlines()
@@ -32,9 +35,10 @@ histories = []
 def statsOnSingle(coinPair):
     global newpair
     pair = public_client.get_product_ticker(product_id=coinPair)  # type: dict
-    newpair = pair.values()
-    return newpair
+    newpair = pair
 
+    #return newpair
+    #return str(newpair)
 
 def formatString(ins):
     new_input = str(ins)
@@ -48,6 +52,7 @@ def twentyFourStats(coinpair):
     day = public_client.get_product_24hr_stats(product_id=coinpair)
     a = day.keys()
     b = day.values()
+
     return a, b
 
 
@@ -112,8 +117,6 @@ def viewHistory(coinPair):
         return x
 
 
-
-
 def getboth(coinpair):
     global histories
     a = splitPairs(coinpair)
@@ -150,7 +153,6 @@ def getPairBalances(coinpair):
 # getPairBalances("USDT-GBP")
 
 
-
 #a test of the bots function after being moved to its own class, parameters in order are, sell price,sell amnt, buy price
 # , buy amnt, and trading pair -will change currency to first later
 def botTest():
@@ -177,26 +179,57 @@ centreframe.pack(side=tk.TOP,padx=10, pady=10)
 rightframe = tk.LabelFrame(root,bg="grey", padx=5, pady=5,width=rootWidth/3, height= rootHeight-10)
 rightframe.pack(padx=10, pady=10,side=tk.LEFT)
 
+
+
+
 centretitle = tk.Label(centreframe, text="Enter pair here in this format: algo-gbp, btc-eur to see stats in the left pane")
 centretitle.pack()
-lefttitle = tk.Label(leftframe, text="Statistics for the chosen currency pairs")
-lefttitle.pack()
+
 righttitle = tk.Label(rightframe, text="Configure Bots in this panel, then launch when ready")
 righttitle.pack()
 
-w = tk.Label(leftframe, height=25, width=25, relief="raised", bg="grey")
-w.pack(side=tk.TOP)
-xb = tk.Frame(leftframe, height=25, width=25, relief="raised", bg="grey")
-xb.pack(side=tk.RIGHT)
-y = tk.Frame(leftframe, height=25, width=25, relief="raised", bg="grey")
-y.pack(side=tk.TOP)
-z = tk.Frame(leftframe, height=25, width=25, relief="raised", bg="grey")
-z.pack(side=tk.TOP)
-zx = tk.Frame(leftframe, height=25, width=25, relief="raised", bg="grey")
-zx.pack(side=tk.TOP)
+
+sinstats = tk.Label(leftframe, text="Current stats")
+sinstats.pack()
+statssingleholder = tk.Text(leftframe, width=40, height=7,borderwidth=2, relief="groove", padx=5, pady=5)
+statssingleholder.pack(pady= 10, padx= 10)
+twenfrstats = tk.Label(leftframe, text="24 hour stats")
+twenfrstats.pack()
+statstwenfour = tk.Text(leftframe, width=40, height=6,borderwidth=2, relief="groove", padx=5, pady=5)
+statstwenfour.pack(pady= 10, padx= 10)
+orderlab = tk.Label(leftframe, text="Order book")
+orderlab.pack()
+orderbholder = tk.Text(leftframe, width=40, height=9,borderwidth=2, relief="groove", padx=5, pady=5)
+orderbholder.pack(pady= 10, padx= 10)
+pairslab = tk.Label(leftframe, text="balances")
+pairslab.pack()
+pairsholder = tk.Text(leftframe, width=40, height=10,borderwidth=2, relief="groove", padx=5, pady=5)
+pairsholder.pack(pady= 10, padx= 10)
+
+histoframe = tk.LabelFrame(root,bg="grey", padx=5, pady=5,width=rootWidth/3, height= rootHeight-10)
+histoframe.pack(padx=10, pady=10,side=tk.LEFT)
+
+# histlab = tk.Label(histoframe, text="History")
+# histlab.pack()
+
+histholder = tk.Text(histoframe, width=40, height=50,borderwidth=2, relief="groove")
+histholder.pack(side=tk.LEFT)
+
+scroll_bar = tk.Scrollbar(histoframe, orient="vertical",command=histholder.yview)
+scroll_bar.pack(side=tk.RIGHT, expand=True, fill="y")
+histholder.configure(yscrollcommand=scroll_bar.set)
 
 
-#opens a new window containing the bots running data
+
+
+
+
+# balholder = tk.Text(leftframe, width=40, height=5,borderwidth=2, relief="groove", padx=5, pady=5)
+# balholder.pack(pady= 10, padx= 10)
+
+
+
+#opens a new window containing the bots running data - not implemented yeet
 def openNewWindow():
     newWindow = tk.Toplevel(root)
     newWindow.title("new window")
@@ -210,29 +243,12 @@ def loadData():
     global balances
     global histories
 
-    singleStats = tk.Label(w, text=str(formatString(newpair)))
-    singleStats.pack(padx=5, pady=15, side=tk.LEFT)
-    labelsarray.append(singleStats)
-
-    twentyfourStats = tk.Label(xb, text=str(formatString(day)))
-    twentyfourStats.pack(padx=5, pady=15, side=tk.LEFT)
-    labelsarray.append(twentyfourStats)
-
-    getbook = tk.Label(y, text=str(formatString(book)))
-    getbook.pack(padx=5, pady=15, side=tk.LEFT)
-    labelsarray.append(getbook)
-
-    getpairs = tk.Label(z, text=str(formatString(balances)))
-    getpairs.pack(padx=5, pady=15, side=tk.LEFT)
-    labelsarray.append(getpairs)
-
-    gethistory = tk.Label(zx, text=str(formatString(histories)))
-    gethistory.pack(padx=5, pady=15, side=tk.LEFT)
-    labelsarray.append(gethistory)
-
-    # getbalance = tk.Label(z, text=str(formatString(singlbal)))
-    # getbalance.pack(padx=5, pady=15, side=tk.LEFT)
-    # labelsarray.append(getbalance)
+    statssingleholder.insert('1.0', formatString(newpair))
+    statstwenfour.insert('1.0', formatString(day))
+    orderbholder.insert('1.0', formatString(book))
+    pairsholder.insert('1.0', formatString(balances))
+    histholder.insert('1.0', formatString(histories))
+    #balholder.insert('1.0', singlbal)
 
 
 def submit():  # Callback function for SUBMIT Button
@@ -253,14 +269,82 @@ def submit():  # Callback function for SUBMIT Button
     loadData()
 
 
+
+
+selectorframe = tk.LabelFrame(rightframe,bg="grey", padx=5, pady=5)
+selectorframe.pack(padx=10, pady=10,side=tk.LEFT)
+
+botselecttext = tk.Label(selectorframe, text="choose the type of bot to deploy")
+botselecttext.pack()
+
+naivebot = tk.Label(selectorframe, text="Naive bot")
+naivebot.pack()
+xradio = tk.Radiobutton(selectorframe, width=15, height=1)
+xradio.pack()
+nextbot = tk.Label(selectorframe, text="Not yet bot")
+nextbot.pack()
+yradio = tk.Radiobutton(selectorframe, width=15, height=1)
+yradio.pack()
+nextbota = tk.Label(selectorframe, text="Nope bot")
+nextbota.pack()
+zradio = tk.Radiobutton(selectorframe, width=15, height=1)
+zradio.pack()
+nextbotb = tk.Label(selectorframe, text="you wish bot")
+nextbotb.pack()
+qradio = tk.Radiobutton(selectorframe, width=15, height=1)
+qradio.pack()
+
+
+
+buttonsframe = tk.LabelFrame(rightframe,bg="grey", padx=5, pady=5)
+buttonsframe.pack(padx=10, pady=10,side=tk.LEFT)
+
+
+
+
+
+
+sellp = tk.Label(buttonsframe, text="enter the sell price")
+sellp.pack()
+sellpricebox = tk.Text(buttonsframe, width=5, height=1)
+sellpricebox.pack()
+
+
+sellam = tk.Label(buttonsframe, text="enter the sell amount")
+sellam.pack()
+sellamntbox = tk.Text(buttonsframe, width=5, height=1)
+sellamntbox.pack()
+
+buyp = tk.Label(buttonsframe, text="enter the buy price")
+buyp.pack()
+buypricebox = tk.Text(buttonsframe, width=5, height=1)
+buypricebox.pack()
+
+buyam = tk.Label(buttonsframe, text="enter the buy amount")
+buyam.pack()
+buyamntbox = tk.Text(buttonsframe, width=5, height=1)
+buyamntbox.pack()
+
+
+currancylab = tk.Label(buttonsframe, text="enter the currency pair")
+currancylab.pack()
+currencybox = tk.Text(buttonsframe, width=15, height=1)
+currencybox.pack()
+
+textdesc = tk.Text(rightframe, width=40, height=10,borderwidth=2, relief="groove", padx=5, pady=5)
+textdesc.pack(pady= 10, padx= 10)
+
 textbox = tk.Text(centreframe, width=30, height=2)
 textbox.pack()
+
 
 submitbutton = tk.Button(centreframe, width=10, height=1, text='SUBMIT', command=submit)
 submitbutton.pack()
 
 btn = tk.Button(rightframe,text="Submit\n(A new window will open showing data from it)",command = openNewWindow)
 btn.pack(pady= 10, padx= 100, side=tk.BOTTOM)
+
+
 
 
 # quitbutton = tk.Button(root, width=10, height=1, text='QUIT', command=quit)
